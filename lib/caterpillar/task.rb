@@ -137,8 +137,8 @@ module Caterpillar
       if @config.container.kind_of? Liferay
         tasks << "#{@name}:liferayportletapp"
         tasks << "#{@name}:liferaydisplay"
-      end              
-      
+      end
+
       task :makexml => tasks
       #puts 'Done!'
     end
@@ -169,7 +169,7 @@ module Caterpillar
         info 'Creating YAML fixtures from %s database' % RAILS_ENV
 
         # define and create the target directory
-        target = 
+        target =
           (defined? RAILS_ROOT) ?
             File.join(RAILS_ROOT,'test','fixtures') : 'fixtures'
         if !File.exists?(target)
@@ -232,6 +232,13 @@ module Caterpillar
     # collects Rails' routes and parses the config
     def define_parse_task
       task :parse do
+        # Need to load rails environment before parsing routes, in case anyone used Rails.env
+        begin
+          require(File.join(@config.rails_root, 'config', 'environment'))
+        rescue
+          raise 'Rails environment could not be loaded'
+        end
+
         @config.routes = Util.parse_routes(@config)
         @portlets = Parser.new(@config).portlets
       end
@@ -543,7 +550,7 @@ module Caterpillar
       with_namespace_and_config do |name, config|
         desc 'Deploys the WAR file'
         task :war do
-          file = 
+          file =
           	if @config.servlet.any?
             	@config.servlet + '.war'
             else
@@ -585,7 +592,7 @@ module Caterpillar
 
     def define_rails_task
       task :rails do
-        exit 1 unless conferring_step 'Checking for required gems...' do 
+        exit 1 unless conferring_step 'Checking for required gems...' do
           check_required_gems
         end
         exit 1 unless conferring_step 'Checking for JRuby binary...' do
@@ -602,7 +609,7 @@ module Caterpillar
           update_environment(ARGV[1] + '/config/environment.rb')
         end
         exit 1 unless conferring_step 'Activating caterpillar...' do
-          # Rake::Task['pluginize'].execute         
+          # Rake::Task['pluginize'].execute
           Dir.chdir("#{ARGV[1]}/vendor/plugins"){system 'ruby -S gem unpack caterpillar >/dev/null'}
           Dir.chdir("#{ARGV[1]}"){system 'ruby script/generate caterpillar >/dev/null'}
         end
@@ -681,7 +688,7 @@ module Caterpillar
 
     def check_jruby
       has_jruby = system 'jruby --copyright >/dev/null 2>&1'
-      
+
       if has_jruby
         return true
       else
@@ -693,7 +700,7 @@ module Caterpillar
     def check_jruby_required_gems
       jruby_gems = `jruby -S gem list`
       available_gems = []
-      
+
       @required_gems.each {|gem| available_gems << gem if jruby_gems.match(gem)}
       gems_not_found = (@required_gems - available_gems)
 
@@ -724,12 +731,12 @@ module Caterpillar
             "  config.war_name = '#{project_name}-portlet'\n")
       File.open(file_path, 'w') {|f| f << file}
     end
-    
+
 
     def conferring_step(message)
       $stdout.print message
       $stdout.flush
-      
+
       result = yield
       if result.class == String or result.class == NilClass
         $stdout.puts "\e[31mFAILED\e[0m"
@@ -740,6 +747,6 @@ module Caterpillar
         return true
       end
     end
-      
+
   end
 end
