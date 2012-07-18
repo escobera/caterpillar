@@ -211,11 +211,7 @@ module Caterpillar
     # reads Rails environment configuration
     def define_environment_task
       task :environment do
-        begin
-          require(File.join(@config.rails_root, 'config', 'environment'))
-        rescue
-          raise 'Rails environment could not be loaded'
-        end
+        require(File.join(@config.rails_root, 'config', 'environment'))
         if @config.container.is_a?(Caterpillar::Liferay)
           # since Caterpillar version 1.6.0, Liferay version is not required
           #if @config.container.version.nil? and !defined?(Lportal)
@@ -233,11 +229,7 @@ module Caterpillar
     def define_parse_task
       task :parse do
         # Need to load rails environment before parsing routes, in case anyone used Rails.env
-        begin
-          require(File.join(@config.rails_root, 'config', 'environment'))
-        rescue
-          raise 'Rails environment could not be loaded'
-        end
+        require(File.join(@config.rails_root, 'config', 'environment'))
 
         @config.routes = Util.parse_routes(@config)
         @portlets = Parser.new(@config).portlets
