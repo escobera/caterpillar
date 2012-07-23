@@ -4,35 +4,38 @@
 # This source code is available under the MIT license.
 # See the file LICENSE.txt for details.
 #++
+require 'rake/dsl_definition'
+include Rake::DSL
 
 require File.join(File.dirname(__FILE__),'..','spec_helper')
 require File.join(File.dirname(__FILE__),'..','..','lib','caterpillar')
+
 require 'tmpdir'
 
-describe Caterpillar::Task do
+describe Caterpillar::CliTask do
 
   before(:all) do
     @liferay_xml_dir = File.dirname(File.expand_path(__FILE__)) + '/../xml'
+    load File.join(File.dirname(__FILE__),'..','..','rakelib','tasks.rake')
   end
 
   before(:each) do
-    @rake = Rake::Application.new
-    Rake.application = @rake
-    verbose(false)
-    @task = Caterpillar::Task.new
+    #@rake = Rake::Application.new
+    # Rake.application = @rake
+    # verbose(false)
+    # @task = Caterpillar::Task.new
     @pwd = Dir.pwd
     @tmpdir = Dir.tmpdir + '/caterpillar'
     Dir.mkdir(@tmpdir) unless File.exists?(@tmpdir)
   end
 
   after(:each) do
-    @task = nil
     FileUtils.rm_rf @tmpdir
     Dir.chdir @pwd
   end
 
   it "should print version" do
-    capture { Rake::Task["version"].invoke }.should =~ /Caterpillar #{Caterpillar::VERSION}/
+    capture { Rake::Task["caterpillar:version"].invoke }.should =~ /#{Caterpillar::VERSION}/
   end
 
   it "should create a conf file" do
@@ -48,6 +51,7 @@ describe Caterpillar::Task do
         :name     => 'portlet_test_bench',
     }
     @task.config.instances << portlet
+    #binding.pry
     capture { Rake::Task["portlets"].invoke }.should =~ /no route for portlet_test_bench/
   end
 
@@ -123,7 +127,7 @@ describe Caterpillar::Task do
     @task.config.container.root.should == container_root
 
     @task.config.container.server = 'Tomcat'
-    @task.config.container.deploy_dir.should == container_root + '/webapps' 
+    @task.config.container.deploy_dir.should == container_root + '/webapps'
     @task.config.container.WEB_INF.should == container_root + '/webapps/ROOT/WEB-INF'
   end
 

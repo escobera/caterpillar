@@ -1,5 +1,5 @@
-require 'rubygems'
-require 'lib/caterpillar'
+# -*- encoding: utf-8 -*-
+require File.expand_path('../lib/caterpillar/version', __FILE__)
 
 Gem::Specification.new do |s|
   s.name = %q{caterpillar}
@@ -7,10 +7,15 @@ Gem::Specification.new do |s|
   s.email = %q{mikael.lammentausta@gmail.com}
   s.homepage = %q{http://github.com/lamikae/caterpillar}
   s.version = Caterpillar::VERSION
-    
+
 	s.add_dependency("hpricot", ">= 0.6.164")
+  s.add_dependency("rails", "~> 3.2.6")
 	s.add_dependency("jrexml")
 	s.add_dependency("rake")
+
+  # For testing
+  s.add_development_dependency 'rspec'
+  s.add_development_dependency 'pry'
 
   s.description = %q{= Caterpillar}
 

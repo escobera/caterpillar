@@ -7,10 +7,6 @@
 # software license details.
 #++
 
-module Caterpillar
-  VERSION = '1.6.0' unless defined? Caterpillar::VERSION
-end
-
 this_file = File.symlink?(__FILE__) ? File.readlink(__FILE__) : __FILE__
 this_dir = File.dirname(File.expand_path(this_file))
 

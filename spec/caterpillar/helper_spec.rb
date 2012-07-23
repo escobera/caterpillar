@@ -4,6 +4,8 @@
 # This source code is available under the MIT license.
 # See the file LICENSE.txt for details.
 #++
+require 'rake/dsl_definition'
+include Rake::DSL
 
 require File.join(File.dirname(__FILE__),'..','spec_helper')
 require File.join(File.dirname(__FILE__),'..','..','lib','caterpillar')
@@ -16,7 +18,7 @@ class MockController
 end
 
 
-describe Caterpillar::Task do
+describe Caterpillar::CliTask do
 
   before(:all) do
   end
@@ -31,7 +33,7 @@ describe Caterpillar::Task do
   after(:each) do
     @task = nil
   end
-  
+
   it "should form resource url" do
     mock = MockController.new
     resource_url = 'http://liferay-resource.url:80/'

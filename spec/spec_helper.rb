@@ -5,11 +5,8 @@
 # This source code is available under the MIT license.
 # See the file LICENSE.txt for details.
 #++
-
-require 'rubygems'
-require 'spec'
-
 $LOAD_PATH.unshift File.dirname(__FILE__) + '/../lib'
+require 'pry'
 
 raise %{Error: detected running specs in a Rails app;
 Caterpillar specs are destructive to application directories.} if File.directory?("app")
@@ -33,7 +30,7 @@ def capture(&block)
   io.string
 end
 
-Spec::Runner.configure do |config|
+RSpec.configure do |config|
   config.after(:each) do
     class << Object
       public :remove_const

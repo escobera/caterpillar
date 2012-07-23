@@ -5,8 +5,6 @@
 # See the file MIT-LICENSE included with the distribution for
 # software license details.
 #++
-
-require 'rubygems'
 require 'action_controller'
 
 module Caterpillar # :nodoc:
@@ -38,4 +36,3 @@ module Helpers # :nodoc:
   end
 end
 end
-  

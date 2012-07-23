@@ -12,30 +12,30 @@ require 'action_controller'
 
 module Caterpillar # :nodoc:
 module Helpers # :nodoc:
-  
+
   # This module contains Rails helpers that provide methods to deal with various aspects
   # of portlet functionality in Liferay.
   module Liferay
     include ActionView::Helpers::TagHelper
     include Portlet
-    
+
     class ResourceUrl
-      include ActionController::UrlWriter
-      
+      #include ActionController::UrlWriter
+
       require 'uri'
-      
+
       attr_accessor :resource_uri
       attr_accessor :namespace
       attr_accessor :options
       attr_accessor :params
-      
+
       def initialize(base_url, namespace = '', options = {}, params = {})
         @resource_uri = URI.parse(base_url)
         @namespace = namespace
         @options = options
         @params = params
       end
-      
+
       def to_s()
         uri = @resource_uri.dup
         if @options.values.compact.empty?
@@ -67,17 +67,17 @@ module Helpers # :nodoc:
         end
         return '%s://%s:%i%s' % [uri.scheme, uri.host, uri.port, uri.request_uri]
       end
-      
+
     end
-    
+
     def resource_url_cookie
       cookies[:Liferay_resourceUrl]
     end
-    
+
     def preferences_cookie
       cookies[:Liferay_preferences]
     end
-    
+
     # Get the Liferay UID from cookie.
     def get_liferay_uid
       uid_key = 'Liferay_UID'
@@ -99,21 +99,21 @@ module Helpers # :nodoc:
         logger.debug("GID key is not present in cookies %s" % cookies.inspect)
       end
     end
-    
+
     # Formulate resource URL for Liferay.
     # The request will be handled by serveResource().
-    # The cookie "Liferay_resourceUrl" should be automatically included into 
+    # The cookie "Liferay_resourceUrl" should be automatically included into
     # available cookies by "rails-portlet".
     def liferay_resource_url(_params, resource_url=resource_url_cookie)
       if resource_url.nil? then return raise "resource_url is needed!" end
       params = _params.dup # create duplicate params, do not modify originals!
-      
+
       options = {
         :controller => params.delete(:controller),
         :action => params.delete(:action),
         :route => params.delete(:route)
         }
-      
+
       res = ResourceUrl.new(resource_url)
       res.options = options
       res.namespace = @namespace || namespace_cookie
